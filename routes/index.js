@@ -7,9 +7,10 @@ router.get('/', function(req, res, next) {
 });
 
 router.post('/photo', (req, res) => {
+  console.log(req.body);
+
     var photo = req.body.photo;
 
-    console.log(photo);
 
 });
 
