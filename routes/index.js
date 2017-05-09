@@ -17,7 +17,7 @@ router.post('/photo', (req, res) => {
 
   var s3Bucket = new AWS.S3( { params: {Bucket: 'parkcurity'} } );
   s3Bucket.putObject({
-      Key: 'image',
+      Key: 'image11.jpg',
       Body: buf,
       ContentEncoding: 'base64',
       ContentType: 'image/jpeg'
