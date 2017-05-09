@@ -7,7 +7,7 @@ router.get('/', function(req, res, next) {
 });
 
 router.post('/photo', (req, res) => {
-  console.log(req);
+  console.log(req.body);
 
     res.json({success: true, result: 'photo received'});
 
