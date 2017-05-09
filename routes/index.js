@@ -11,16 +11,15 @@ router.get('/', function(req, res, next) {
 router.post('/photo', (req, res) => {
   AWS.config.update({ accessKeyId: process.env.awsKey, secretAccessKey: process.env.awsSecret });
 
-  console.log(req.body.image);
+  var buf = new Buffer(req.body.image, 'base64');
 
-  var buf = new Buffer(req.body.image);
-
-  var s3Bucket = new AWS.S3( { params: {Bucket: 'parkcurity'} } );
-  s3Bucket.putObject({
-      Key: 'image11.jpg',
+  s3.putObject({
+    Bucket: 'parkcurity',
+      Key: 'image1111.jpg',
       Body: buf,
       ContentEncoding: 'base64',
-      ContentType: 'image/jpeg'
+      ContentType: 'image/jpeg',
+      ACL: 'public-read'
     },function (err, data) {
       if (err){
         console.log('Error uploading data: ', data);
