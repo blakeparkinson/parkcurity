@@ -14,10 +14,13 @@ router.post('/photo', (req, res) => {
   var buf = new Buffer(req.body.image, 'base64');
   var s3 = new AWS.S3();
 
+  var timestamp = new Date().getTime().toString();
+
+
 
   s3.putObject({
     Bucket: 'parkcurity',
-      Key: 'image1111.jpg',
+      Key: timestamp + '.jpg',
       Body: buf,
       ContentEncoding: 'base64',
       ContentType: 'image/jpeg',
