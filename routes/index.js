@@ -13,10 +13,14 @@ router.post('/photo', (req, res) => {
 
   console.log(req.body.image);
 
+  var buf = new Buffer(req.body.image);
+
   var s3Bucket = new AWS.S3( { params: {Bucket: 'parkcurity'} } );
   s3Bucket.putObject({
-      Key: 'image.jpg',
-      Body: req.body.image
+      Key: 'image',
+      Body: buf,
+      ContentEncoding: 'base64',
+      ContentType: 'image/jpeg'
     },function (err, data) {
       if (err){
         console.log('Error uploading data: ', data);
