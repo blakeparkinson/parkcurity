@@ -12,6 +12,8 @@ router.post('/photo', (req, res) => {
   AWS.config.update({ accessKeyId: process.env.awsKey, secretAccessKey: process.env.awsSecret });
 
   var buf = new Buffer(req.body.image, 'base64');
+  var s3 = new AWS.S3();
+
 
   s3.putObject({
     Bucket: 'parkcurity',
