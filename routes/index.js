@@ -1,7 +1,12 @@
 var express = require('express');
 var router = express.Router();
 var AWS = require('aws-sdk');
+var module_exists = require('module-exists');
+var config = require('../config.json');
 
+
+
+Image = require( "../models/image" );
 
 /* GET home page. */
 router.get('/', function(req, res, next) {
@@ -9,7 +14,11 @@ router.get('/', function(req, res, next) {
 });
 
 router.post('/photo', (req, res) => {
-  AWS.config.update({ accessKeyId: process.env.awsKey, secretAccessKey: process.env.awsSecret });
+
+  var awsKey = config.awsKey ? config.awsKey: process.env.awsKey;
+  var awsSecret = config.awsSecret? config.awsSecret: process.env.awsSecret;
+
+  AWS.config.update({ accessKeyId: awsKey, secretAccessKey: awsSecret });
 
   var buf = new Buffer(req.body.image, 'base64');
   var s3 = new AWS.S3();
@@ -18,7 +27,7 @@ router.post('/photo', (req, res) => {
 
 
 
-  s3.putObject({
+  s3.upload({
     Bucket: 'parkcurity',
       Key: timestamp + '.jpg',
       Body: buf,
@@ -27,16 +36,25 @@ router.post('/photo', (req, res) => {
       ACL: 'public-read'
     },function (err, data) {
       if (err){
-        console.log('Error uploading data: ', data);
+        console.log('Error uploading data: ', err);
       }
       else{
-        console.log('Successfully uploaded package.');
+
+        //save the image to the db
+        var image = new Image({
+          name: data.key,
+          url: data.Location,
+          cameraId: 444
+        })
+
+        image.save(function (err, results) {
+          console.log('Successfully uploaded package.');
+          res.json({success: true, result: 'photo received'});
+
+
+        });
       }
     })
-
-    res.json({success: true, result: 'photo received'});
-
-
 
 });
 
