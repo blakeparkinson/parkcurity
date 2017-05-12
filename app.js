@@ -11,7 +11,8 @@ var app = express();
 var mongoose = require( 'mongoose' );
 
 
-mongoose.connect('mongodb://heroku_gggb9c60:5uojhgmok4rk6orh7q7fk06du@ds137101.mlab.com:37101/heroku_gggb9c60');
+//mongoose.connect('mongodb://heroku_gggb9c60:5uojhgmok4rk6orh7q7fk06du@ds137101.mlab.com:37101/heroku_gggb9c60');
+mongoose.connect('localhost:27017/parkcurity');
 
 // view engine setup
 app.set('views', path.join(__dirname, 'views'));
