@@ -17,7 +17,6 @@ else{
   mongoose.connect('localhost:27017/parkcurity');
 }
 
-  mongoose.connect('mongodb://heroku_gggb9c60:5uojhgmok4rk6orh7q7fk06du@ds137101.mlab.com:37101/heroku_gggb9c60');
 
 
 // view engine setup
