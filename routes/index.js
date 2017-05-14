@@ -13,7 +13,7 @@ AWS.config.update({ accessKeyId: awsKey, secretAccessKey: awsSecret });
 
 /* GET home page. */
 router.get('/', function(req, res, next) {
-  res.render('index', { title: 'Express' });
+  res.render('index', { title: 'Parkcurity' });
 });
 
 router.get('/photo', (req, res) => {
@@ -77,6 +77,7 @@ router.post('/photo', (req, res) => {
       }
     })
 
+  });
 });
 
 module.exports = router;
