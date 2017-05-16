@@ -17,12 +17,23 @@ router.get('/', function(req, res, next) {
 });
 
 router.get('/photo', (req, res) => {
-  var limit = req.query.limit ? req.body.limit : 10;
+  var limit = req.query.limit ? req.query.limit : 10;
+  var offset = req.query.offset ? req.query.offset: 0;
 
 
-  Image.find(req.query.criteria, (err, images) => {
+  Image.find(req.query.criteria)
+    .limit(limit)
+    .skip(offset)
+    .exec((err, images) => {
 
-    res.json({success: true, result: images});
+    if (err){
+
+      res.json({error: err});
+    }
+
+    else{
+      res.json({success: true, result: images});
+    }
 
   })
 
