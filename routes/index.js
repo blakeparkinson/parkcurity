@@ -31,7 +31,7 @@ router.get('/photo', (req, res) => {
     }
 
     else{
-      res.json({success: true, result: images});
+      res.json(images);
     }
 
   })
