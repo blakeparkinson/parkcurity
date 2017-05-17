@@ -17,9 +17,8 @@ router.get('/', function(req, res, next) {
 });
 
 router.get('/photo', (req, res) => {
-  var limit = req.query.limit ? req.query.limit : 10;
-  var offset = req.query.offset ? req.query.offset: 0;
-
+  var limit = req.query.limit ? parseInt(req.query.limit) : 10;
+  var offset = req.query.offset ? parseInt(req.query.offset): 0;
 
   Image.find(req.query.criteria)
     .limit(limit)
