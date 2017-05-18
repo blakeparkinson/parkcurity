@@ -39,6 +39,23 @@ router.get('/photo', (req, res) => {
 
 });
 
+router.get('/photolimit', (req, res) => {
+
+  var hour = req.query.hour? req.query.hour: 24;
+    Image.find({createdAt:{$gt:new Date(Date.now() - hour*60*60 * 1000)}}, (err,result)=>{
+
+      if (err){
+
+        res.json({error: err});
+      }
+
+     else{
+       res.json(result);
+      }
+    })
+
+});
+
 router.post('/photo', (req, res) => {
 
   var buf = new Buffer(req.body.image, 'base64');
