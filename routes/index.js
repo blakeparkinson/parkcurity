@@ -23,7 +23,7 @@ router.get('/photo', (req, res) => {
   Image.find(req.query.criteria)
     .sort({'createdAt':-1})
     .limit(limit)
-    .skip(offset)
+    .skip(offset * limit)
     .exec((err, images) => {
 
     if (err){
