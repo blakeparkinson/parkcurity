@@ -21,6 +21,7 @@ router.get('/photo', (req, res) => {
   var offset = req.query.offset ? parseInt(req.query.offset): 0;
 
   Image.find(req.query.criteria)
+    .sort({'createdAt':-1})
     .limit(limit)
     .skip(offset)
     .exec((err, images) => {
