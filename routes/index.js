@@ -68,7 +68,7 @@ router.post('/photo', (req, res) => {
   var image = new Image({
     name: timestamp,
     url: 'someurl',
-    cameraId: 444
+    cameraId: req.body.cameraId
   })
 
   image.save(function (err, results) {
