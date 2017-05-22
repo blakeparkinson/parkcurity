@@ -64,15 +64,6 @@ router.post('/photo', (req, res) => {
 
   var timestamp = new Date().getTime().toString();
 
-  //save the image to the db
-  var image = new Image({
-    name: timestamp,
-    url: 'someurl',
-    cameraId: req.body.cameraId
-  })
-
-  image.save(function (err, results) {
-
   s3.upload({
     Bucket: 'parkcurity',
       Key: timestamp + '.jpg',
@@ -90,7 +81,7 @@ router.post('/photo', (req, res) => {
         var image = new Image({
           name: data.key,
           url: data.Location,
-          cameraId: 444
+          cameraId: req.body.cameraId ? req.body.cameraId : 1
         })
 
         image.save(function (err, results) {
@@ -105,7 +96,6 @@ router.post('/photo', (req, res) => {
       }
     })
 
-  });
 });
 
 module.exports = router;
