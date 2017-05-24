@@ -59,7 +59,6 @@ router.get('/photolimit', (req, res) => {
 
 router.post('/photo', (req, res) => {
 
-  console.log('here');
   var buf = new Buffer(req.body.image, 'base64');
   var s3 = new AWS.S3();
 
@@ -78,7 +77,6 @@ router.post('/photo', (req, res) => {
       }
       else{
 
-        console.log('here now');
         doRecognition(data, (err,resp) =>{
 
           if (err){
@@ -88,7 +86,6 @@ router.post('/photo', (req, res) => {
 
           }
           else{
-            console.log('and here');
             if (foundHuman(resp)){
 
               //save the image to the db
@@ -126,7 +123,6 @@ router.post('/photo', (req, res) => {
 
 function foundHuman(dataLabels){
   var found = false;
-  console.log(dataLabels);
   validEntries = [ 'People', 'Person', 'Human', 'Group', 'Animal']
   for (let label of dataLabels.Labels){
     if (validEntries.indexOf(label.Name)> -1){
@@ -152,7 +148,6 @@ function doRecognition(data, callback){
       MaxLabels: 10,
       MinConfidence: 50
   }
-  console.log('yooo');
   rek.detectLabels(params, (err, dataLabels) =>{
 
     if (err){
