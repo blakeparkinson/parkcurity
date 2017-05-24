@@ -9,7 +9,7 @@ Image = require( "../models/image" );
 var awsKey = config.awsKey ? config.awsKey: process.env.awsKey;
 var awsSecret = config.awsSecret? config.awsSecret: process.env.awsSecret;
 
-AWS.config.update({ accessKeyId: awsKey, secretAccessKey: awsSecret });
+AWS.config.update({ accessKeyId: awsKey, secretAccessKey: awsSecret, region: 'us-west-2' });
 
 /* GET home page. */
 router.get('/', function(req, res, next) {
@@ -77,25 +77,90 @@ router.post('/photo', (req, res) => {
       }
       else{
 
-        //save the image to the db
-        var image = new Image({
-          name: data.key,
-          url: data.Location,
-          cameraId: req.body.cameraId ? req.body.cameraId : 1
-        })
-
-        image.save(function (err, results) {
+        doRecognition(data, (err,resp) =>{
 
           if (err){
-            res.json({error: 'Failed to save image: ' + err});
+
+            res.json({error: 'Image Rekognition failed ' + err});
+
+
           }
           else{
-            res.json({success: true, result: 'photo received'});
+            if (foundHuman(resp)){
+
+              //save the image to the db
+              var image = new Image({
+                name: data.key,
+                url: data.Location,
+                cameraId: req.body.cameraId ? req.body.cameraId : 1
+              })
+
+              image.save(function (err, results) {
+
+                if (err){
+                  res.json({error: 'Failed to save image: ' + err});
+                }
+                else{
+                  res.json({success: true, result: 'motion detected human'});
+                }
+              });
+
+            }
+            else{
+
+                res.json({success: true, result: 'no human was detected in motion event'});
+
+            }
           }
-        });
+
+
+        })
+
       }
     })
 
 });
+
+function foundHuman(dataLabels){
+  var found = false;
+  validEntries = [ 'People', 'Person', 'Human', 'Group', 'Animal']
+  for (let label of dataLabels.Labels){
+    if (validEntries.indexOf(label.Name)> -1){
+      found = true;
+      break;
+    }
+  }
+
+  return found;
+}
+
+function doRecognition(data, callback){
+
+  var rek = new AWS.Rekognition();
+
+  var params = {
+    Image: {
+      S3Object:{
+        Bucket: data.Bucket,
+        Name: 'blakemotion.jpg'//data.key
+      }
+    },
+      MaxLabels: 10,
+      MinConfidence: 50
+  }
+  
+  rek.detectLabels(params, (err, dataLabels) =>{
+
+    if (err){
+      
+      callback(err);
+    }
+    else{
+      callback(null,dataLabels);
+    }
+  })
+
+}
+
 
 module.exports = router;
