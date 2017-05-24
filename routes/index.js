@@ -59,6 +59,7 @@ router.get('/photolimit', (req, res) => {
 
 router.post('/photo', (req, res) => {
 
+  console.log('here');
   var buf = new Buffer(req.body.image, 'base64');
   var s3 = new AWS.S3();
 
@@ -77,6 +78,7 @@ router.post('/photo', (req, res) => {
       }
       else{
 
+        console.log('here now');
         doRecognition(data, (err,resp) =>{
 
           if (err){
@@ -86,6 +88,7 @@ router.post('/photo', (req, res) => {
 
           }
           else{
+            console.log('and here');
             if (foundHuman(resp)){
 
               //save the image to the db
