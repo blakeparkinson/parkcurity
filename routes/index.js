@@ -123,6 +123,7 @@ router.post('/photo', (req, res) => {
 
 function foundHuman(dataLabels){
   var found = false;
+  console.log(dataLabels);
   validEntries = [ 'People', 'Person', 'Human', 'Group', 'Animal']
   for (let label of dataLabels.Labels){
     if (validEntries.indexOf(label.Name)> -1){
@@ -142,13 +143,13 @@ function doRecognition(data, callback){
     Image: {
       S3Object:{
         Bucket: data.Bucket,
-        Name: 'blakemotion.jpg'//data.key
+        Name: data.key
       }
     },
       MaxLabels: 10,
       MinConfidence: 50
   }
-  
+  console.log('yooo');
   rek.detectLabels(params, (err, dataLabels) =>{
 
     if (err){
