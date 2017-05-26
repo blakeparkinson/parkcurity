@@ -4,7 +4,8 @@ var mongoose = require('mongoose'),
 var TokenSchema = new Schema({
     token: {
         type: String,
-        required: true
+        required: true,
+        unique: true
     },
     os: {
         type: String,

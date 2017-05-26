@@ -3,6 +3,7 @@ var router = express.Router();
 var AWS = require('aws-sdk');
 var module_exists = require('module-exists');
 var config = require('../config.json');
+var request = require('request');
 
 Image = require( "../models/image" );
 Token = require( "../models/token" );
@@ -87,10 +88,66 @@ router.get('/photolimit', (req, res) => {
 
 });
 
-router.post('/token', (req, res) => {
+router.post('/token', saveToken);
+
+function saveToken(req,res){
+
+  if (req.body.token && req.body.os){
+    var token = new Token( {
+      token: req.body.token,
+      os: req.body.os
+    });
+    token.save( (err, result ) => {
+      if (err){
+        res.json({error: err});
+      }
+      else{
+        res.json(result);
+      }
+    });
+  }
 
 
-});
+  else{
+
+      res.json({error: 'Missing required fields'});
+
+  }
+
+}
+
+function sendNotification(imageResult){
+
+  Token.find({}, (err, result) => {
+    for (let tokenRecord of result){
+
+      var requestBody = {
+            token: tokenRecord.token,
+            alert: `Motion ws detected on camera: ${imageResult.cameraId}`,
+            payload: {
+		          imageId: imageResult._id
+	          },
+            topic: 'com.parkcurity.app',
+            secret_sauce: 'glassenberg'
+
+        };
+
+        var options = {
+            method: 'post',
+            body: requestBody,
+            json: true,
+            url: 'https://apn-push.herokuapp.com/apn'
+        }
+
+
+        request( options, ( err, res, body ) => {
+            
+
+        } );
+    }
+
+  });
+}
 
 router.post('/photo', (req, res) => {
 
@@ -130,12 +187,13 @@ router.post('/photo', (req, res) => {
                 cameraId: req.body.cameraId ? req.body.cameraId : 1
               })
 
-              image.save(function (err, results) {
+              image.save(function (err, imageResult) {
 
                 if (err){
                   res.json({error: 'Failed to save image: ' + err});
                 }
                 else{
+                  sendNotification(imageResult);
                   res.json({success: true, result: 'motion detected human'});
                 }
               });
