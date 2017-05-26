@@ -5,6 +5,8 @@ var module_exists = require('module-exists');
 var config = require('../config.json');
 
 Image = require( "../models/image" );
+Token = require( "../models/token" );
+
 
 var awsKey = config.awsKey ? config.awsKey: process.env.awsKey;
 var awsSecret = config.awsSecret? config.awsSecret: process.env.awsSecret;
@@ -15,6 +17,34 @@ AWS.config.update({ accessKeyId: awsKey, secretAccessKey: awsSecret, region: 'us
 router.get('/', function(req, res, next) {
   res.render('index', { title: 'Parkcurity' });
 });
+
+router.use( '*', authenticate );
+
+function authenticate(req, res, next){
+
+  if (!req.headers || !req.headers.authentication){
+    res.status(401).json({
+      status: 'error',
+      title: 'Missing Token'
+    });
+  }
+  else{
+
+    var authentication = config.authentication ? config.authentication : process.env.authentication;
+
+    if (req.headers.authentication != authentication){
+      res.status(401).json({
+        status: 'error',
+        title: 'Invalid Token'
+      });
+    }
+
+    else{
+      next();
+    }
+  }
+
+}
 
 router.get('/photo', (req, res) => {
   var limit = req.query.limit ? parseInt(req.query.limit) : 10;
@@ -54,6 +84,11 @@ router.get('/photolimit', (req, res) => {
        res.json(result);
       }
     })
+
+});
+
+router.post('/token', (req, res) => {
+
 
 });
 
