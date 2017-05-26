@@ -71,6 +71,18 @@ router.get('/photo', (req, res) => {
 
 });
 
+router.get('/photo/:id', (req, res) => {
+  Image.findById(req.params.id, (err, result) =>{
+    if (err){
+      res.json({error: err});
+    }
+    else{
+      res.json(result);
+    }
+  });
+});
+
+
 router.get('/photolimit', (req, res) => {
 
   var hour = req.query.hour? req.query.hour: 24;
@@ -123,7 +135,7 @@ function sendNotification(imageResult){
 
       var requestBody = {
             token: tokenRecord.token,
-            alert: `Motion ws detected on camera: ${imageResult.cameraId}`,
+            alert: `Motion was detected on camera: ${imageResult.cameraId}`,
             payload: {
 		          imageId: imageResult._id
 	          },
