@@ -213,7 +213,7 @@ router.post('/photo', (req, res) => {
             }
             else{
 
-                res.json({success: true, result: 'no human was detected in motion event', found: response});
+                res.json({success: true, result: 'no human was detected in motion event', found: resp});
 
             }
           }
