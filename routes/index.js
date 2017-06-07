@@ -213,7 +213,6 @@ router.post('/photo', (req, res) => {
 
             }
             else{
-              console.log(resp.Labels);
                 var motion = new Motion({
                   name: data.key,
                   url: data.Location,
