@@ -6,6 +6,7 @@ var config = require('../config.json');
 var request = require('request');
 
 Image = require( "../models/image" );
+Motion = require( "../models/motion" );
 Token = require( "../models/token" );
 
 
@@ -212,12 +213,28 @@ router.post('/photo', (req, res) => {
 
             }
             else{
+              console.log(resp.Labels);
+                var motion = new Motion({
+                  name: data.key,
+                  url: data.Location,
+                  cameraId: req.body.cameraId ? req.body.cameraId : 1,
+                  labels: resp.Labels
 
-                res.json({success: true, result: 'no human was detected in motion event', found: resp});
+                });
+
+                motion.save(function (err, motionResult) {
+
+                  if (err){
+                    res.json({error: 'Failed to save motion: ' + err});
+                  }
+                  else{
+                    res.json({success: true, result: 'no human was detected in motion event', found: resp});
+
+                  }
+                });
 
             }
           }
-
 
         })
 
