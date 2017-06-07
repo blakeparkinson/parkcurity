@@ -250,8 +250,8 @@ function doRecognition(data, callback){
         Name: data.key
       }
     },
-      MaxLabels: 10,
-      MinConfidence: 50
+      MaxLabels: 15,
+      MinConfidence: 30
   }
   rek.detectLabels(params, (err, dataLabels) =>{
 
