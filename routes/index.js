@@ -72,6 +72,30 @@ router.get('/photo', (req, res) => {
 
 });
 
+router.get('/motion', (req, res) => {
+  var limit = req.query.limit ? parseInt(req.query.limit) : 10;
+  var offset = req.query.offset ? parseInt(req.query.offset): 0;
+
+  Motion.find(req.query.criteria)
+    .sort({'createdAt':-1})
+    .limit(limit)
+    .skip(offset * limit)
+    .exec((err, images) => {
+
+    if (err){
+
+      res.json({error: err});
+    }
+
+    else{
+      res.json(images);
+    }
+
+  })
+
+
+});
+
 router.get('/photo/:id', (req, res) => {
   Image.findById(req.params.id, (err, result) =>{
     if (err){
