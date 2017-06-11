@@ -10,6 +10,10 @@ var ImageSchema = new Schema({
         type: String,
         required: true
     },
+    labels:{
+        type: Array,
+        required: false
+    },
     cameraId: {
         type: Number,
         required: true

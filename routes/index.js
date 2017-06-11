@@ -221,7 +221,8 @@ router.post('/photo', (req, res) => {
               var image = new Image({
                 name: data.key,
                 url: data.Location,
-                cameraId: req.body.cameraId ? req.body.cameraId : 1
+                cameraId: req.body.cameraId ? req.body.cameraId : 1,
+                labels: resp.Labels
               })
 
               image.save(function (err, imageResult) {
