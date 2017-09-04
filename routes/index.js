@@ -269,7 +269,7 @@ router.post('/photo', (req, res) => {
 
 function foundHuman(dataLabels){
   var found = false;
-  validEntries = [ 'People', 'Person', 'Human', 'Group', 'Animal'];
+  validEntries = [ 'People', 'Person', 'Human', 'Group', 'Animal', 'Silhouette'];
   for (let label of dataLabels.Labels){
     if (validEntries.indexOf(label.Name)> -1){
       found = true;
