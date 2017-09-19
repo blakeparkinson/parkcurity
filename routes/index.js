@@ -99,7 +99,9 @@ router.get('/motion', (req, res) => {
 router.get('/photo/:id', (req, res) => {
   Image.findById(req.params.id, (err, result) =>{
     if (err){
+	    
       res.json({error: err});
+	    
     }
     else{
       res.json(result);
