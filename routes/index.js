@@ -33,18 +33,18 @@ function authenticate(req, res, next){
   }
   else{
 
-    var authentication = config.authentication ? config.authentication : process.env.authentication;
+    // var authentication = config.authentication ? config.authentication : process.env.authentication;
 
-    if (req.headers.authentication != authentication){
-      res.status(401).json({
-        status: 'error',
-        title: 'Invalid Token'
-      });
-    }
+    // if (req.headers.authentication != authentication){
+    //   res.status(401).json({
+    //     status: 'error',
+    //     title: 'Invalid Token'
+    //   });
+    // }
 
-    else{
+    // else{
       next();
-    }
+    // }
   }
 
 }
@@ -133,7 +133,6 @@ router.post('/token', saveToken);
 router.post('/image', waifu)
 
 function saveToken(req,res){
-
   if (req.body.token && req.body.os){
     var token = new Token( {
       token: req.body.token,
@@ -158,34 +157,24 @@ function saveToken(req,res){
 
 }
 
-function waifu(req, res){
-
-        var formData = querystring.stringify({
-            'noise': 1,
-            'scale': 2,
-            'style': 'photo',
-            'url': req.body.imageUrl
-        });
-        request({
-            headers: {
-                'Content-Type': 'application/x-www-form-urlencoded',
-                'Accept': '*/*'
-            },
-            uri: 'http://waifu2x.udp.jp/api',
-            method: 'POST',
-            body: formData,
-            encoding: null
-        }, function(err, response, body) {
-            // copy response headers
-            for (var key in response.headers) {
-                if (response.headers.hasOwnProperty(key)) {
-                    res.setHeader(key, response.headers[key])
-                }
-            }
-            //res.send(response.body);
-            console.log(response.body);
-            res.send(new Buffer(response.body).toString('base64'));
-        });
+function waifu(imgUrl, cb){
+    var formData ={
+        image: req.body.imageUrl
+    };
+    request.post({
+        headers: {
+            'Api-Key': '5f8e80bb-352b-49d9-8cdf-01d65da30935'
+        },
+        url: 'https://api.deepai.org/api/waifu2x',
+        formData: formData
+    }, function(err, response, body) {
+        // copy response headers
+        if (err) {
+          return console.error('request failed:', err);
+        }
+        var response = JSON.parse(body);
+        cb(response);
+    });
 }
 
 function sendNotification(imageResult){
@@ -252,25 +241,26 @@ router.post('/photo', (req, res) => {
           else{
             if (foundHuman(resp)){
 
-              //save the image to the db
-              var image = new Image({
-                name: data.key,
-                url: data.Location,
-                cameraId: req.body.cameraId ? req.body.cameraId : 1,
-                labels: resp.Labels
+              waifu(data.Location, (response) =>{
+                //save the image to the db
+                var image = new Image({
+                  name: data.key,
+                  url: response.output_url,
+                  cameraId: req.body.cameraId ? req.body.cameraId : 1,
+                  labels: resp.Labels
+                })
+
+                image.save(function (err, imageResult) {
+
+                  if (err){
+                    res.json({error: 'Failed to save image: ' + err});
+                  }
+                  else{
+                    sendNotification(imageResult);
+                    res.json({success: true, result: 'motion detected human'});
+                  }
+                });
               })
-
-              image.save(function (err, imageResult) {
-
-                if (err){
-                  res.json({error: 'Failed to save image: ' + err});
-                }
-                else{
-                  sendNotification(imageResult);
-                  res.json({success: true, result: 'motion detected human'});
-                }
-              });
-
             }
             else{
                 var motion = new Motion({
