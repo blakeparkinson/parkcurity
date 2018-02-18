@@ -158,6 +158,7 @@ function saveToken(req,res){
 }
 
 function waifu(imgUrl, cb){
+    console.log('here');
     var formData ={
         image: imgUrl
     };
@@ -173,6 +174,8 @@ function waifu(imgUrl, cb){
           return console.error('request failed:', err);
         }
         var response = JSON.parse(body);
+        console.log(response);
+
         cb(response);
     });
 }
@@ -242,6 +245,8 @@ router.post('/photo', (req, res) => {
             if (foundHuman(resp)){
 
               waifu(data.Location, (response) =>{
+
+                console.log('here');
                 //save the image to the db
                 var image = new Image({
                   name: data.key,
