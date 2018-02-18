@@ -2,6 +2,7 @@ var express = require('express');
 var router = express.Router();
 var AWS = require('aws-sdk');
 var module_exists = require('module-exists');
+var querystring = require('querystring');
 var config = require('../config.json');
 var request = require('request');
 
@@ -129,6 +130,8 @@ router.get('/photolimit', (req, res) => {
 
 router.post('/token', saveToken);
 
+router.post('/image', waifu)
+
 function saveToken(req,res){
 
   if (req.body.token && req.body.os){
@@ -153,6 +156,36 @@ function saveToken(req,res){
 
   }
 
+}
+
+function waifu(req, res){
+
+        var formData = querystring.stringify({
+            'noise': 1,
+            'scale': 2,
+            'style': 'photo',
+            'url': req.body.imageUrl
+        });
+        request({
+            headers: {
+                'Content-Type': 'application/x-www-form-urlencoded',
+                'Accept': '*/*'
+            },
+            uri: 'http://waifu2x.udp.jp/api',
+            method: 'POST',
+            body: formData,
+            encoding: null
+        }, function(err, response, body) {
+            // copy response headers
+            for (var key in response.headers) {
+                if (response.headers.hasOwnProperty(key)) {
+                    res.setHeader(key, response.headers[key])
+                }
+            }
+            //res.send(response.body);
+            console.log(response.body);
+            res.send(new Buffer(response.body).toString('base64'));
+        });
 }
 
 function sendNotification(imageResult){
