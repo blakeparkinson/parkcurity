@@ -169,9 +169,7 @@ function waifu(imgUrl, cb){
         url: 'https://api.deepai.org/api/waifu2x',
         formData: formData
     }, function(err, response, body) {
-        console.log(err);
         var response = JSON.parse(body);
-        console.log(response);
 
         cb(response);
     });
@@ -252,7 +250,7 @@ router.post('/photo', (req, res) => {
                   labels: resp.Labels
                 })
 
-                image.save(function (err, imageResult) {
+                image.save( (err, imageResult) => {
 
                   if (err){
                     res.json({error: 'Failed to save image: ' + err});
