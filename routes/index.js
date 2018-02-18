@@ -158,7 +158,6 @@ function saveToken(req,res){
 }
 
 function waifu(imgUrl, cb){
-    console.log(imgUrl);
     var formData ={
         image: imgUrl
     };
@@ -241,7 +240,6 @@ router.post('/photo', (req, res) => {
 
               waifu(data.Location, (response) =>{
 
-                console.log('here');
                 //save the image to the db
                 var image = new Image({
                   name: data.key,
@@ -257,7 +255,7 @@ router.post('/photo', (req, res) => {
                   }
                   else{
                     sendNotification(imageResult);
-                    res.json({success: true, result: 'motion detected human'});
+                    res.json({success: true, result: 'motion detected human', data: imageResult});
                   }
                 });
               })
