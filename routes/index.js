@@ -159,7 +159,7 @@ function saveToken(req,res){
 
 function waifu(imgUrl, cb){
     var formData ={
-        image: req.body.imageUrl
+        image: imgUrl
     };
     request.post({
         headers: {
