@@ -158,7 +158,7 @@ function saveToken(req,res){
 }
 
 function waifu(imgUrl, cb){
-    console.log('here');
+    console.log(imgUrl);
     var formData ={
         image: imgUrl
     };
@@ -169,10 +169,7 @@ function waifu(imgUrl, cb){
         url: 'https://api.deepai.org/api/waifu2x',
         formData: formData
     }, function(err, response, body) {
-        // copy response headers
-        if (err) {
-          return console.error('request failed:', err);
-        }
+        console.log(err);
         var response = JSON.parse(body);
         console.log(response);
 
