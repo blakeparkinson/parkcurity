@@ -33,18 +33,18 @@ function authenticate(req, res, next){
   }
   else{
 
-    // var authentication = config.authentication ? config.authentication : process.env.authentication;
+    var authentication = config.authentication ? config.authentication : process.env.authentication;
 
-    // if (req.headers.authentication != authentication){
-    //   res.status(401).json({
-    //     status: 'error',
-    //     title: 'Invalid Token'
-    //   });
-    // }
+    if (req.headers.authentication != authentication){
+      res.status(401).json({
+        status: 'error',
+        title: 'Invalid Token'
+      });
+    }
 
-    // else{
+    else{
       next();
-    // }
+    }
   }
 
 }
