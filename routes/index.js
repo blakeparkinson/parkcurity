@@ -146,6 +146,8 @@ router.post('/product', cors(), (req, res) => {
     url: 'https://staging.backboneapp.co/api/v1/models/Object',
     formData: req.body
   }, function (err, response, body) {
+    console.log(err)
+    console.log(response)
     res.json(response)
   });
 
