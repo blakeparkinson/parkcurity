@@ -144,8 +144,6 @@ router.post('/product', (req, res) => {
     url: 'https://staging.backboneapp.co/api/v1/models/Object',
     formData: req.body
   }, function (err, response, body) {
-    var response = JSON.parse(body);
-
     res.json(response)
   });
 
@@ -177,9 +175,6 @@ function saveToken(req, res) {
 
 }
 
-function(product) {
-
-}
 function waifu(imgUrl, cb) {
   var formData = {
     image: imgUrl
