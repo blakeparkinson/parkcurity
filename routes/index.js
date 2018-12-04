@@ -148,10 +148,8 @@ router.post('/product', cors(), (req, res) => {
     body: req.body,
     json: true
   }, function (err, response, body) {
-    console.log(err)
-    console.log(response)
-    console.log(body)
-    res.json(response)
+
+    res.json(response.body)
   });
 
 })
