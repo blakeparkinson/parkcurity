@@ -6,105 +6,107 @@ var querystring = require('querystring');
 var config = require('../config.json');
 var request = require('request');
 
-Image = require( "../models/image" );
-Motion = require( "../models/motion" );
-Token = require( "../models/token" );
+Image = require("../models/image");
+Motion = require("../models/motion");
+Token = require("../models/token");
 
 
-var awsKey = config.awsKey ? config.awsKey: process.env.awsKey;
-var awsSecret = config.awsSecret? config.awsSecret: process.env.awsSecret;
+var awsKey = config.awsKey ? config.awsKey : process.env.awsKey;
+var awsSecret = config.awsSecret ? config.awsSecret : process.env.awsSecret;
 
 AWS.config.update({ accessKeyId: awsKey, secretAccessKey: awsSecret, region: 'us-west-2' });
 
 /* GET home page. */
-router.get('/', function(req, res, next) {
+router.get('/', function (req, res, next) {
   res.render('index', { title: 'Parkcurity' });
 });
 
-router.use( '*', authenticate );
+// router.use( '*', authenticate );
 
-function authenticate(req, res, next){
+function authenticate(req, res, next) {
 
-  if (!req.headers || !req.headers.authentication){
+  if (!req.headers || !req.headers.authentication) {
     res.status(401).json({
       status: 'error',
       title: 'Missing Token'
     });
   }
-  else{
+  else {
 
     var authentication = config.authentication ? config.authentication : process.env.authentication;
 
-    if (req.headers.authentication != authentication){
+    if (req.headers.authentication != authentication) {
       res.status(401).json({
         status: 'error',
         title: 'Invalid Token'
       });
     }
 
-    else{
+    else {
       next();
     }
   }
 
 }
 
+
+
 router.get('/photo', (req, res) => {
   var limit = req.query.limit ? parseInt(req.query.limit) : 10;
-  var offset = req.query.offset ? parseInt(req.query.offset): 0;
+  var offset = req.query.offset ? parseInt(req.query.offset) : 0;
 
   Image.find(req.query.criteria)
-    .sort({'createdAt':-1})
+    .sort({ 'createdAt': -1 })
     .limit(limit)
     .skip(offset * limit)
     .exec((err, images) => {
 
-    if (err){
+      if (err) {
 
-      res.json({error: err});
-    }
+        res.json({ error: err });
+      }
 
-    else{
-      res.json(images);
-    }
+      else {
+        res.json(images);
+      }
 
-  })
+    })
 
 
 });
 
 router.get('/motion', (req, res) => {
   var limit = req.query.limit ? parseInt(req.query.limit) : 10;
-  var offset = req.query.offset ? parseInt(req.query.offset): 0;
+  var offset = req.query.offset ? parseInt(req.query.offset) : 0;
 
   Motion.find(req.query.criteria)
-    .sort({'createdAt':-1})
+    .sort({ 'createdAt': -1 })
     .limit(limit)
     .skip(offset * limit)
     .exec((err, images) => {
 
-    if (err){
+      if (err) {
 
-      res.json({error: err});
-    }
+        res.json({ error: err });
+      }
 
-    else{
-      res.json(images);
-    }
+      else {
+        res.json(images);
+      }
 
-  })
+    })
 
 
 });
 
 router.get('/photo/:id', (req, res) => {
-  Image.findById(req.params.id, (err, result) =>{
-    if (err){
-	    
-      res.json({error: err});
-	    
+  Image.findById(req.params.id, (err, result) => {
+    if (err) {
+
+      res.json({ error: err });
+
     }
-    else{
+    else {
       res.json(result);
     }
   });
@@ -113,18 +115,18 @@ router.get('/photo/:id', (req, res) => {
 
 router.get('/photolimit', (req, res) => {
 
-  var hour = req.query.hour? req.query.hour: 24;
-    Image.find({createdAt:{$gt:new Date(Date.now() - hour*60*60 * 1000)}}, (err,result)=>{
+  var hour = req.query.hour ? req.query.hour : 24;
+  Image.find({ createdAt: { $gt: new Date(Date.now() - hour * 60 * 60 * 1000) } }, (err, result) => {
 
-      if (err){
+    if (err) {
 
-        res.json({error: err});
-      }
+      res.json({ error: err });
+    }
 
-     else{
-       res.json(result);
-      }
-    })
+    else {
+      res.json(result);
+    }
+  })
 
 });
 
@@ -132,76 +134,97 @@ router.post('/token', saveToken);
 
 router.post('/image', waifu)
 
-function saveToken(req,res){
-  if (req.body.token && req.body.os){
-    var token = new Token( {
+router.post('/product', (req, res) => {
+  const token = req.body.bbtoken;
+  delete req.body.token
+  request.post({
+    headers: {
+      'authentication': token
+    },
+    url: 'https://staging.backboneapp.co/api/v1/models/Object',
+    formData: req.body
+  }, function (err, response, body) {
+    var response = JSON.parse(body);
+
+    res.json(response)
+  });
+
+})
+
+
+function saveToken(req, res) {
+  if (req.body.token && req.body.os) {
+    var token = new Token({
       token: req.body.token,
       os: req.body.os
     });
-    token.save( (err, result ) => {
-      if (err){
-        res.json({error: err});
+    token.save((err, result) => {
+      if (err) {
+        res.json({ error: err });
       }
-      else{
+      else {
         res.json(result);
       }
     });
   }
 
 
-  else{
+  else {
 
-      res.json({error: 'Missing required fields'});
+    res.json({ error: 'Missing required fields' });
 
   }
 
 }
 
-function waifu(imgUrl, cb){
-    var formData ={
-        image: imgUrl
-    };
-    request.post({
-        headers: {
-            'Api-Key': '5f8e80bb-352b-49d9-8cdf-01d65da30935'
-        },
-        url: 'https://api.deepai.org/api/waifu2x',
-        formData: formData
-    }, function(err, response, body) {
-        var response = JSON.parse(body);
+function(product) {
 
-        cb(response);
-    });
+}
+function waifu(imgUrl, cb) {
+  var formData = {
+    image: imgUrl
+  };
+  request.post({
+    headers: {
+      'Api-Key': '5f8e80bb-352b-49d9-8cdf-01d65da30935'
+    },
+    url: 'https://api.deepai.org/api/waifu2x',
+    formData: formData
+  }, function (err, response, body) {
+    var response = JSON.parse(body);
+
+    cb(response);
+  });
 }
 
-function sendNotification(imageResult){
+function sendNotification(imageResult) {
 
   Token.find({}, (err, result) => {
-    for (let tokenRecord of result){
+    for (let tokenRecord of result) {
 
       var requestBody = {
-            token: tokenRecord.token,
-            alert: `Motion was detected on camera: ${imageResult.cameraId}`,
-            payload: {
-		          imageId: imageResult._id
-	          },
-            topic: 'com.parkcurity.app',
-            secret_sauce: 'glassenberg'
+        token: tokenRecord.token,
+        alert: `Motion was detected on camera: ${imageResult.cameraId}`,
+        payload: {
+          imageId: imageResult._id
+        },
+        topic: 'com.parkcurity.app',
+        secret_sauce: 'glassenberg'
 
-        };
+      };
 
-        var options = {
-            method: 'post',
-            body: requestBody,
-            json: true,
-            url: 'https://apn-push.herokuapp.com/apn'
-        }
+      var options = {
+        method: 'post',
+        body: requestBody,
+        json: true,
+        url: 'https://apn-push.herokuapp.com/apn'
+      }
 
 
-        request( options, ( err, res, body ) => {
-            
+      request(options, (err, res, body) => {
 
-        } );
+
+      });
     }
 
   });
@@ -216,85 +239,85 @@ router.post('/photo', (req, res) => {
 
   s3.upload({
     Bucket: 'parkcurity',
-      Key: timestamp + '.jpg',
-      Body: buf,
-      ContentEncoding: 'base64',
-      ContentType: 'image/jpeg',
-      ACL: 'public-read'
-    },function (err, data) {
-      if (err){
-        res.json({error: 'Failed to upload image to AWS: ' + err});
-      }
-      else{
+    Key: timestamp + '.jpg',
+    Body: buf,
+    ContentEncoding: 'base64',
+    ContentType: 'image/jpeg',
+    ACL: 'public-read'
+  }, function (err, data) {
+    if (err) {
+      res.json({ error: 'Failed to upload image to AWS: ' + err });
+    }
+    else {
 
-        doRecognition(data, (err,resp) =>{
+      doRecognition(data, (err, resp) => {
 
-          if (err){
+        if (err) {
 
-            res.json({error: 'Image Rekognition failed ' + err});
+          res.json({ error: 'Image Rekognition failed ' + err });
 
 
-          }
-          else{
-            if (foundHuman(resp)){
+        }
+        else {
+          if (foundHuman(resp)) {
 
-              waifu(data.Location, (response) =>{
+            waifu(data.Location, (response) => {
 
-                //save the image to the db
-                var image = new Image({
-                  name: data.key,
-                  url: response.output_url,
-                  cameraId: req.body.cameraId ? req.body.cameraId : 1,
-                  labels: resp.Labels
-                })
-
-                image.save( (err, imageResult) => {
-
-                  if (err){
-                    res.json({error: 'Failed to save image: ' + err});
-                  }
-                  else{
-                    sendNotification(imageResult);
-                    res.json({success: true, result: 'motion detected human', data: imageResult});
-                  }
-                });
+              //save the image to the db
+              var image = new Image({
+                name: data.key,
+                url: response.output_url,
+                cameraId: req.body.cameraId ? req.body.cameraId : 1,
+                labels: resp.Labels
               })
-            }
-            else{
-                var motion = new Motion({
-                  name: data.key,
-                  url: data.Location,
-                  cameraId: req.body.cameraId ? req.body.cameraId : 1,
-                  labels: resp.Labels
 
-                });
+              image.save((err, imageResult) => {
 
-                motion.save(function (err, motionResult) {
-
-                  if (err){
-                    res.json({error: 'Failed to save motion: ' + err});
-                  }
-                  else{
-                    res.json({success: true, result: 'no human was detected in motion event', found: resp});
-
-                  }
-                });
-
-            }
+                if (err) {
+                  res.json({ error: 'Failed to save image: ' + err });
+                }
+                else {
+                  sendNotification(imageResult);
+                  res.json({ success: true, result: 'motion detected human', data: imageResult });
+                }
+              });
+            })
           }
+          else {
+            var motion = new Motion({
+              name: data.key,
+              url: data.Location,
+              cameraId: req.body.cameraId ? req.body.cameraId : 1,
+              labels: resp.Labels
 
-        })
+            });
 
-      }
-    })
+            motion.save(function (err, motionResult) {
+
+              if (err) {
+                res.json({ error: 'Failed to save motion: ' + err });
+              }
+              else {
+                res.json({ success: true, result: 'no human was detected in motion event', found: resp });
+
+              }
+            });
+
+          }
+        }
+
+      })
+
+    }
+  })
 
 });
 
-function foundHuman(dataLabels){
+function foundHuman(dataLabels) {
   var found = false;
-  validEntries = [ 'People', 'Person', 'Human', 'Group', 'Animal', 'Silhouette'];
-  for (let label of dataLabels.Labels){
-    if (validEntries.indexOf(label.Name)> -1){
+  validEntries = ['People', 'Person', 'Human', 'Group', 'Animal', 'Silhouette'];
+  for (let label of dataLabels.Labels) {
+    if (validEntries.indexOf(label.Name) > -1) {
       found = true;
       break;
     }
@@ -303,28 +326,28 @@ function foundHuman(dataLabels){
   return found;
 }
 
-function doRecognition(data, callback){
+function doRecognition(data, callback) {
 
   var rek = new AWS.Rekognition();
 
   var params = {
     Image: {
-      S3Object:{
+      S3Object: {
         Bucket: data.Bucket,
         Name: data.key
       }
     },
-      MaxLabels: 15,
-      MinConfidence: 30
+    MaxLabels: 15,
+    MinConfidence: 30
   }
-  rek.detectLabels(params, (err, dataLabels) =>{
+  rek.detectLabels(params, (err, dataLabels) => {
 
-    if (err){
-      
+    if (err) {
+
       callback(err);
     }
-    else{
-      callback(null,dataLabels);
+    else {
+      callback(null, dataLabels);
     }
   })
 
