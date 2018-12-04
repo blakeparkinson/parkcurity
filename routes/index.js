@@ -5,6 +5,8 @@ var module_exists = require('module-exists');
 var querystring = require('querystring');
 var config = require('../config.json');
 var request = require('request');
+var cors = require('cors');
+
 
 Image = require("../models/image");
 Motion = require("../models/motion");
@@ -134,7 +136,7 @@ router.post('/token', saveToken);
 
 router.post('/image', waifu)
 
-router.post('/product', (req, res) => {
+router.post('/product', cors(), (req, res) => {
   const token = req.body.bbtoken;
   delete req.body.token
   request.post({
