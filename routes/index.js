@@ -137,7 +137,7 @@ router.post('/token', saveToken);
 router.post('/image', waifu)
 
 router.post('/product', cors(), (req, res) => {
-  console.log('hiii')
+  console.log(req.body)
   const token = req.body.bbtoken;
   delete req.body.token
   request.post({
@@ -145,7 +145,8 @@ router.post('/product', cors(), (req, res) => {
       'authentication': token
     },
     url: 'https://staging.backboneapp.co/api/v1/models/Object',
-    formData: req.body
+    body: req.body,
+    json: true
   }, function (err, response, body) {
     console.log(err)
     console.log(response)
