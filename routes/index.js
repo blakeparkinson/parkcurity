@@ -137,6 +137,7 @@ router.post('/token', saveToken);
 router.post('/image', waifu)
 
 router.post('/product', cors(), (req, res) => {
+  console.log('hiii')
   const token = req.body.bbtoken;
   delete req.body.token
   request.post({
@@ -148,6 +149,7 @@ router.post('/product', cors(), (req, res) => {
   }, function (err, response, body) {
     console.log(err)
     console.log(response)
+    console.log(body)
     res.json(response)
   });
 
