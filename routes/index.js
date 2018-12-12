@@ -144,7 +144,7 @@ router.post('/product', cors(), (req, res) => {
     headers: {
       'authentication': token
     },
-    url: 'https://staging.backboneapp.co/api/v1/models/ConstructionDetail',
+    url: 'https://demo.backboneapp.co/api/v1/models/ConstructionDetail',
     body: req.body,
     json: true
   }, function (err, response, body) {
