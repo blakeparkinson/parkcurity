@@ -114,10 +114,26 @@ router.get('/motion', (req, res) => {
 
 });
 
-router.get('/shopify', (req, res) => {
-  shopify.product.list({ limit: 50 })
+router.post('/shopify', (req, res) => {
+  shopify.product.create({
+    "title": "Burton Custom Freestyle 151",
+    "body_html": "<strong>Good snowboard!</strong>",
+    "vendor": "Burton",
+    "product_type": "Snowboard",
+    "images": [
+      {
+        "src": "http://example.com/rails_logo.gif"
+      }
+    ]
+  })
     .then(orders => console.log(orders))
     .catch(err => console.error(err));
+});
+
+router.get('/shopify', (req, res) => {
+  shopify.product.list({ limit: 50 })
+    .then(orders => res.json(orders))
+    .catch(err => res.error(err));
 });
 
 router.get('/photo/:id', (req, res) => {
