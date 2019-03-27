@@ -7,6 +7,19 @@ var config = require('../config.json');
 var request = require('request');
 var cors = require('cors');
 
+const Shopify = require('shopify-api-node');
+
+const shopName = config.shopName ? config.shopName : process.env.shopName;
+const shopApiKey = config.shopApiKey ? config.shopApiKey : process.env.shopApiKey;
+const shopPass = config.shopPass ? config.shopPass : process.env.shopPass;
+
+
+
+const shopify = new Shopify({
+  shopName: shopName,
+  apiKey: shopApiKey,
+  password: shopPass
+});
 
 Image = require("../models/image");
 Motion = require("../models/motion");
@@ -99,6 +112,12 @@ router.get('/motion', (req, res) => {
     })
 
 
+});
+
+router.get('/shopify', (req, res) => {
+  shopify.products.list({ limit: 550 })
+    .then(orders => console.log(orders))
+    .catch(err => console.error(err));
 });
 
 router.get('/photo/:id', (req, res) => {
