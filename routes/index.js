@@ -115,7 +115,7 @@ router.get('/motion', (req, res) => {
 });
 
 router.get('/shopify', (req, res) => {
-  shopify.products.list({ limit: 550 })
+  shopify.product.list({ limit: 550 })
     .then(orders => console.log(orders))
     .catch(err => console.error(err));
 });
