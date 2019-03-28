@@ -74,7 +74,7 @@ router.get('/vision', async (req, res) => {
   const client = new vision.ImageAnnotatorClient();
 
   // Performs label detection on the image file
-  const [result] = await client.labelDetection('./resources/wakeupcat.jpg');
+  const [result] = await client.labelDetection('https://awionline.org/sites/default/files/styles/art/public/page/image/dairy%20cow_awa_mike%20suarez%203.jpg?itok=8gwAk8xC');
   const labels = result.labelAnnotations;
   console.log('Labels:');
   labels.forEach(label => console.log(label.description));
