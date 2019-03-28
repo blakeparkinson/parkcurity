@@ -149,7 +149,7 @@ router.get('/motion', (req, res) => {
 router.post('/shopify', (req, res) => {
   shopify.product.create({
     "title": req.body.name,
-    "body_html": "<strong>Sample Product</strong>",
+    "body_html": `<strong>Backone ID: ${req.body.backboneId} </strong>`,
     "images": [
       {
         "src": req.body.image
