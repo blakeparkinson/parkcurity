@@ -358,8 +358,8 @@ router.post('/photo', (req, res) => {
                       res.json({ error: 'Failed to save image: ' + err });
                     }
                     else {
-                      sendNotification(imageResult);
-                      res.json({ success: true, result: 'motion detected human', data: imageResult });
+                      // sendNotification(imageResult);
+                      res.json({ success: true, result: 'Labels Detected', data: imageResult });
                     }
                   });
                 })
