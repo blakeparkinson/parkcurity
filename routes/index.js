@@ -163,7 +163,7 @@ router.get('/shopify', (req, res) => {
 
 router.get('/pizzastores', (req, res) => {
   pizzapi.Util.findNearbyStores(
-    `${req.body.city}, ${req.body.state}, ${req.body.areaCode}`,
+    `${req.query.city}, ${req.query.state}, ${req.query.areaCode}`,
     //'St. Louis, MO, 63102',
     'Delivery',
     (storeData) => {
