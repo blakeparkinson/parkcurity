@@ -82,7 +82,10 @@ router.get('/vision', async (req, res) => {
     res.json(labels)
   } catch (e) {
     console.log(e)
-    res.error(e)
+    res.status(401).json({
+      status: 'error',
+      title: e
+    });
   }
 })
 
