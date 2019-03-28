@@ -9,6 +9,8 @@ var cors = require('cors');
 
 const Shopify = require('shopify-api-node');
 const pizzapi = require('dominos');
+var giphy = require('giphy-api')(process.env.giphyApiKey);
+
 
 
 const shopName = config.shopName ? config.shopName : process.env.shopName;
@@ -66,6 +68,12 @@ function authenticate(req, res, next) {
   }
 
 }
+router.get('/giphy', async (req, res) => {
+
+  giphy.search('req.query.q', function (err, resp) {
+    res.json(resp)
+  });
+})
 
 router.get('/vision', async (req, res) => {
   try {
