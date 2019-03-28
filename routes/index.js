@@ -140,15 +140,8 @@ router.get('/motion', (req, res) => {
 
 router.post('/shopify', (req, res) => {
   shopify.product.create({
-    "title": "Burton Custom Freestyle 222",
-    "body_html": "<strong>Good snowboard!</strong>",
-    "vendor": "Burton",
-    "product_type": "Snowboard",
-    "images": [
-      {
-        "src": "https://library.lapeer.org/children/images/books.jpeg/@@images/6e669654-536b-4272-adbb-da6d18d47b5e.jpeg"
-      }
-    ]
+    "title": req.body.name,
+    "body_html": "<strong>Sample Product</strong>"
 
   })
     .then(product => res.json(product))
@@ -215,7 +208,7 @@ router.post('/product', cors(), (req, res) => {
     headers: {
       'authentication': token
     },
-    url: 'https://demo.backboneapp.co/api/v1/models/ConstructionDetail',
+    url: 'https://qa.backboneapp.co/api/v1/models/Object',
     body: req.body,
     json: true
   }, function (err, response, body) {
