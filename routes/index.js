@@ -141,7 +141,12 @@ router.get('/motion', (req, res) => {
 router.post('/shopify', (req, res) => {
   shopify.product.create({
     "title": req.body.name,
-    "body_html": "<strong>Sample Product</strong>"
+    "body_html": "<strong>Sample Product</strong>",
+    "images": [
+      {
+        "src": req.body.image
+      }
+    ]
 
   })
     .then(product => res.json(product))
