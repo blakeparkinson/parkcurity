@@ -224,9 +224,14 @@ router.post('/product', cors(), (req, res) => {
 
 router.post('/slack', cors(), (req, res) => {
   console.log(req.body)
+  var headers = {
+    'Content-type': 'application/json'
+  };
+
   request.post({
-    url: 'http://hooks.slack.com/services/T27PDS45P/BGP3Q0G95/dlDEQWdrkrtxelkSfatv0GI',
+    url: 'https://hooks.slack.com/services/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',
     body: req.body,
+    headers: headers,
     json: true
   }, function (err, response, body) {
 
