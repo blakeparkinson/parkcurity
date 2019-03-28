@@ -67,7 +67,7 @@ function authenticate(req, res, next) {
 
 }
 
-router.get('/vision', (req, res) => {
+router.get('/vision', async (req, res) => {
   const vision = require('@google-cloud/vision');
 
   // Creates a client
