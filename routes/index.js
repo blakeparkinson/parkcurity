@@ -223,6 +223,18 @@ router.post('/product', cors(), (req, res) => {
 
 })
 
+router.post('/slack', cors(), (req, res) => {
+  request.post({
+    url: 'https://hooks.slack.com/services/T27PDS45P/BGP3Q0G95/dlDEQWdrkrtxelkSfatv0GI',
+    body: req.body,
+    json: true
+  }, function (err, response, body) {
+
+    res.json(response.body)
+  });
+
+})
+
 
 function saveToken(req, res) {
   if (req.body.token && req.body.os) {
