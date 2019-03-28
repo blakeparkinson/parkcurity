@@ -70,7 +70,7 @@ function authenticate(req, res, next) {
 }
 router.get('/giphy', async (req, res) => {
 
-  giphy.search('req.query.q', function (err, resp) {
+  giphy.search(req.query.q, function (err, resp) {
     res.json(resp)
   });
 })
