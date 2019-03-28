@@ -120,11 +120,11 @@ router.post('/shopify', (req, res) => {
     "body_html": "<strong>Good snowboard!</strong>",
     "vendor": "Burton",
     "product_type": "Snowboard",
-    "images": [
-      {
-        "src": "http://example.com/rails_logo.gif"
-      }
-    ]
+    "image":
+    {
+      "src": "http://example.com/rails_logo.gif"
+    }
+
   })
     .then(orders => console.log(orders))
     .catch(err => console.error(err));
