@@ -163,7 +163,8 @@ router.get('/shopify', (req, res) => {
 
 router.get('/pizzastores', (req, res) => {
   pizzapi.Util.findNearbyStores(
-    'St. Louis, MO, 63102',
+    `${req.body.city}, ${req.body.state}, ${req.body.areaCode}`,
+    //'St. Louis, MO, 63102',
     'Delivery',
     (storeData) => {
       res.json(storeData);
@@ -379,7 +380,7 @@ router.post('/photo', (req, res) => {
                     res.json({ error: 'Failed to save motion: ' + err });
                   }
                   else {
-                    res.json({ success: true, result: 'no human was detected in motion event', found: resp });
+                    res.json({ success: true, result: 'Labels Detected', found: resp });
 
                   }
                 });
