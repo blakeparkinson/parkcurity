@@ -302,82 +302,95 @@ function sendNotification(imageResult) {
 
 router.post('/photo', (req, res) => {
 
-  var buf = new Buffer(req.body.image, 'base64');
+  // var buf = new Buffer(req.body.image, 'base64');
   var s3 = new AWS.S3();
 
-  var timestamp = new Date().getTime().toString();
+  const options = {
+    uri: req.body.imageUrl,
+    encoding: null
+  };
 
-  s3.upload({
-    Bucket: 'parkcurity',
-    Key: timestamp + '.jpg',
-    Body: buf,
-    ContentEncoding: 'base64',
-    ContentType: 'image/jpeg',
-    ACL: 'public-read'
-  }, function (err, data) {
-    if (err) {
-      res.json({ error: 'Failed to upload image to AWS: ' + err });
-    }
-    else {
+  request(options, (error, response, body) => {
+    if (error || response.statusCode !== 200) {
+      console.log("failed to get image");
+      console.log(error);
+    } else {
 
-      doRecognition(data, (err, resp) => {
+      var timestamp = new Date().getTime().toString();
 
+      s3.upload({
+        Bucket: 'parkcurity',
+        Key: timestamp + '.jpg',
+        Body: body,
+        // ContentEncoding: 'base64',
+        ContentType: 'image/jpeg',
+        ACL: 'public-read'
+      }, function (err, data) {
         if (err) {
-
-          res.json({ error: 'Image Rekognition failed ' + err });
-
-
+          res.json({ error: 'Failed to upload image to AWS: ' + err });
         }
         else {
-          if (foundHuman(resp)) {
 
-            waifu(data.Location, (response) => {
+          doRecognition(data, (err, resp) => {
 
-              //save the image to the db
-              var image = new Image({
-                name: data.key,
-                url: response.output_url,
-                cameraId: req.body.cameraId ? req.body.cameraId : 1,
-                labels: resp.Labels
-              })
+            if (err) {
 
-              image.save((err, imageResult) => {
+              res.json({ error: 'Image Rekognition failed ' + err });
 
-                if (err) {
-                  res.json({ error: 'Failed to save image: ' + err });
-                }
-                else {
-                  sendNotification(imageResult);
-                  res.json({ success: true, result: 'motion detected human', data: imageResult });
-                }
-              });
-            })
-          }
-          else {
-            var motion = new Motion({
-              name: data.key,
-              url: data.Location,
-              cameraId: req.body.cameraId ? req.body.cameraId : 1,
-              labels: resp.Labels
 
-            });
+            }
+            else {
+              if (foundHuman(resp)) {
 
-            motion.save(function (err, motionResult) {
+                waifu(data.Location, (response) => {
 
-              if (err) {
-                res.json({ error: 'Failed to save motion: ' + err });
+                  //save the image to the db
+                  var image = new Image({
+                    name: data.key,
+                    url: response.output_url,
+                    cameraId: req.body.cameraId ? req.body.cameraId : 1,
+                    labels: resp.Labels
+                  })
+
+                  image.save((err, imageResult) => {
+
+                    if (err) {
+                      res.json({ error: 'Failed to save image: ' + err });
+                    }
+                    else {
+                      sendNotification(imageResult);
+                      res.json({ success: true, result: 'motion detected human', data: imageResult });
+                    }
+                  });
+                })
               }
               else {
-                res.json({ success: true, result: 'no human was detected in motion event', found: resp });
+                var motion = new Motion({
+                  name: data.key,
+                  url: data.Location,
+                  cameraId: req.body.cameraId ? req.body.cameraId : 1,
+                  labels: resp.Labels
+
+                });
+
+                motion.save(function (err, motionResult) {
+
+                  if (err) {
+                    res.json({ error: 'Failed to save motion: ' + err });
+                  }
+                  else {
+                    res.json({ success: true, result: 'no human was detected in motion event', found: resp });
+
+                  }
+                });
 
               }
-            });
+            }
 
-          }
+          })
+
         }
-
       })
-
     }
   })
 
