@@ -206,7 +206,6 @@ router.post('/token', saveToken);
 router.post('/image', waifu)
 
 router.post('/product', cors(), (req, res) => {
-  console.log(req.body)
   const token = req.body.bbtoken;
   delete req.body.token
   request.post({
