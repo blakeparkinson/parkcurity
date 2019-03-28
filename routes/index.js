@@ -315,7 +315,7 @@ router.post('/photo', (req, res) => {
       console.log("failed to get image");
       console.log(error);
     } else {
-
+      console.log(body)
       var timestamp = new Date().getTime().toString();
 
       s3.upload({
