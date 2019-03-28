@@ -68,17 +68,22 @@ function authenticate(req, res, next) {
 }
 
 router.get('/vision', async (req, res) => {
-  const vision = require('@google-cloud/vision');
+  try {
+    const vision = require('@google-cloud/vision');
 
-  // Creates a client
-  const client = new vision.ImageAnnotatorClient();
+    // Creates a client
+    const client = new vision.ImageAnnotatorClient();
 
-  // Performs label detection on the image file
-  const [result] = await client.labelDetection('https://awionline.org/sites/default/files/styles/art/public/page/image/dairy%20cow_awa_mike%20suarez%203.jpg?itok=8gwAk8xC');
-  const labels = result.labelAnnotations;
-  console.log('Labels:');
-  labels.forEach(label => console.log(label.description));
-  res.json(labels)
+    // Performs label detection on the image file
+    const [result] = await client.labelDetection('https://awionline.org/sites/default/files/styles/art/public/page/image/dairy%20cow_awa_mike%20suarez%203.jpg?itok=8gwAk8xC');
+    const labels = result.labelAnnotations;
+    console.log('Labels:');
+    labels.forEach(label => console.log(label.description));
+    res.json(labels)
+  } catch (e) {
+    console.log(e)
+    res.error(e)
+  }
 })
 
 
