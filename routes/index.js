@@ -8,6 +8,8 @@ var request = require('request');
 var cors = require('cors');
 
 const Shopify = require('shopify-api-node');
+const pizzapi = require('dominos');
+
 
 const shopName = config.shopName ? config.shopName : process.env.shopName;
 const shopApiKey = config.shopApiKey ? config.shopApiKey : process.env.shopApiKey;
@@ -20,6 +22,7 @@ const shopify = new Shopify({
   apiKey: shopApiKey,
   password: shopPass
 });
+
 
 Image = require("../models/image");
 Motion = require("../models/motion");
@@ -136,6 +139,16 @@ router.get('/shopify', (req, res) => {
     .then(orders => res.json(orders))
     .catch(err => res.error(err));
 });
+
+router.get('/pizzastores', (req, res) => {
+  pizzapi.Util.findNearbyStores(
+    'St. Louis, MO, 63102',
+    'Delivery',
+    (storeData) => {
+      res.json(storeData);
+    }
+  );
+})
 
 router.get('/photo/:id', (req, res) => {
   Image.findById(req.params.id, (err, result) => {
