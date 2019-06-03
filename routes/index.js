@@ -182,15 +182,13 @@ router.post('/token', saveToken)
 router.post('/image', waifu)
 
 router.get('/products', cors(), (req, res) => {
-  const token = req.body.bbtoken
-  delete req.body.token
-  request.post(
+  const token = req.query.bbtoken
+  request.get(
     {
       headers: {
         authentication: token
       },
       url: 'https://qa.backboneapp.co/api/v1/models/Object',
-      body: req.body,
       json: true
     },
     function(err, response, body) {
