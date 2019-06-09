@@ -186,9 +186,10 @@ router.get('/products', cors(), (req, res) => {
   request.get(
     {
       headers: {
-        authentication: token
+        authentication: token,
+        'x-api-key': process.env.BACKBONE_API_KEY
       },
-      url: 'https://qa.backboneapp.co/api/v1/models/Object',
+      url: 'https://api.backboneapp.co/v1/models/Object',
       json: true
     },
     function(err, response, body) {
@@ -203,9 +204,10 @@ router.post('/product', cors(), (req, res) => {
   request.post(
     {
       headers: {
-        authentication: token
+        authentication: token,
+        'x-api-key': process.env.BACKBONE_API_KEY
       },
-      url: 'https://qa.backboneapp.co/api/v1/models/Object',
+      url: 'https://api.backboneapp.co/v1/models/Object',
       body: req.body,
       json: true
     },
