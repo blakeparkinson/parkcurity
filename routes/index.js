@@ -198,6 +198,23 @@ router.get('/products', cors(), (req, res) => {
   )
 })
 
+router.get('/images', cors(), (req, res) => {
+  const token = req.query.bbtoken
+  request.get(
+    {
+      headers: {
+        authentication: token,
+        'x-api-key': process.env.BACKBONE_API_KEY
+      },
+      url: 'https://api.backboneapp.co/v1/models/Image',
+      json: true
+    },
+    function(err, response, body) {
+      res.json(response.body)
+    }
+  )
+})
+
 router.post('/product', cors(), (req, res) => {
   const token = req.body.bbtoken
   delete req.body.token
