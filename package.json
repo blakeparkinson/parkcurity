@@ -7,7 +7,7 @@
   },
   "dependencies": {
     "@google-cloud/vision": "^0.25.0",
-    "aws-sdk": "^2.49.0",
+    "aws-sdk": "^2.814.0",
     "body-parser": "~1.15.2",
     "cookie-parser": "~1.4.3",
     "cors": "^2.8.5",
